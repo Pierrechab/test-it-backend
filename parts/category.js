@@ -3,13 +3,11 @@ const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-const Company = require("../models/Company");
+const Industry = require("../models/Industry");
 
-app.get("/get_company", function(req, res) {
+app.get("/get_category", function(req, res) {
 	// console.log("toto", req.query.id);
-	Company.findOne({
-		_id: req.query.id
-	}).exec(function(err, result) {
+	Industry.find({}).exec(function(err, result) {
 		// console.log(result);
 		res.json(result);
 	});

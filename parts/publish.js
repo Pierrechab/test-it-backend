@@ -76,7 +76,7 @@ app.post("/publish", uploadPictures, function(req, res) {
 				/* adress.push(res[0]);
 			console.log(adress); */
 				if (!err) {
-					console.log(res[0]);
+					// console.log(res[0]);
 					resolve(res[0]);
 				} else {
 					reject(err);
@@ -106,12 +106,15 @@ app.post("/publish", uploadPictures, function(req, res) {
 				ageMin: req.body.ageMin,
 				ageMax: req.body.ageMax,
 				company: req.body.company,
-				genderTarget: req.body.genderTarget
+				genderTarget: req.body.genderTarget,
+				industry: req.body.industry
 			});
 			// Sauvegarder l’offre
 			newOffer.save(function(err, offerSaved) {
 				if (err) {
-					res.status(400).json(err.message);
+					res
+						.status(400)
+						.json("Il y a un problème pour enregistrer l'offre", err.message);
 				} else {
 					res.json(
 						"Nouvelle offre enregistrée avec succès ! Id de l’offre : " +
@@ -127,9 +130,9 @@ app.post("/publish", uploadPictures, function(req, res) {
 				// console.log("pushToken : ", pushToken);
 				// Check that all your push tokens appear to be valid Expo push tokens
 				if (!Expo.isExpoPushToken(pushToken)) {
-					console.error(
-						`Push token ${pushToken} is not a valid Expo push token`
-					);
+					// console.error(
+					// 	`Push token ${pushToken} is not a valid Expo push token`
+					// );
 					continue;
 				}
 
@@ -152,7 +155,7 @@ app.post("/publish", uploadPictures, function(req, res) {
 				for (let chunk of chunks) {
 					try {
 						let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-						console.log(ticketChunk);
+						// console.log(ticketChunk);
 						tickets.push(...ticketChunk);
 						// NOTE: If a ticket contains an error code in ticket.details.error, you
 						// must handle it appropriately. The error codes are listed in the Expo

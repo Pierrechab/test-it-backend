@@ -11,31 +11,38 @@ const mongoose = require("mongoose");
 mongoose.connect(
 	process.env.MONGODB_URI
 		? process.env.MONGODB_URI
-		: "mongodb://heroku_fvvkbxfv:m7gb3ikcpt60e1v2shofr8gkb3@ds125680.mlab.com:25680/heroku_fvvkbxfv",
+		: "mongodb://heroku_nj380ldn:pmsteqpn0ksi0qhgltst5kjtvd@ds151012.mlab.com:51012/heroku_nj380ldn",
 	{ useNewUrlParser: true, useCreateIndex: true }
 );
 
 // Importer les routes
-//Home
-var homeRoutes = require("./parts/home.js");
+// Home
+const homeRoutes = require("./parts/home.js");
 app.use(homeRoutes);
 // Connexion
-var connexionRoutes = require("./parts/connexion.js");
+const connexionRoutes = require("./parts/connexion.js");
 app.use(connexionRoutes);
+// offersRoutes
 const offersRoutes = require("./parts/Offer.js");
 app.use(offersRoutes);
 // MyOffers
 const MyOffersRoutes = require("./parts/MyOffers.js");
 app.use(MyOffersRoutes);
-// Home
-var homeRoutes = require("./parts/home.js");
-app.use(homeRoutes);
+// getOfferCompany
+const getOfferCompany = require("./parts/getOfferCompany");
+app.use(getOfferCompany);
 // Publish
-var publishRoutes = require("./parts/publish.js");
+const publishRoutes = require("./parts/publish.js");
 app.use(publishRoutes);
 // Connexion
-var connexionCompanyRoutes = require("./parts/connexionCompany.js");
+const connexionCompanyRoutes = require("./parts/connexionCompany.js");
 app.use(connexionCompanyRoutes);
+// Company Profile
+const profileRoutes = require("./parts/profile.js");
+app.use(profileRoutes);
+// Category
+const industryRoutes = require("./parts/category.js");
+app.use(industryRoutes);
 
 app.listen(process.env.PORT || 3000, function() {
 	console.log("Server has started");
