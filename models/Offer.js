@@ -29,7 +29,7 @@ const Offer = new mongoose.Schema({
 	availabilities: { type: Number, required: false },
 	price: { type: Number, required: true },
 	typeOffer: { type: String, required: true },
-	industry: { type: mongoose.Schema.Types.ObjectId, ref: "Industry" },
+	industry: [{ type: mongoose.Schema.Types.ObjectId, ref: "Industry" }],
 	criterias: [{ type: mongoose.Schema.Types.ObjectId, ref: "Criteria" }],
 	listTesters: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 	company: {
