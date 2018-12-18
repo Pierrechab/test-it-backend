@@ -7,12 +7,13 @@ const encBase64 = require("crypto-js/enc-base64");
 const uid2 = require("uid2");
 var validator = require("validator");
 var Company = require("../models/Company");
+const uploadPictures = require("./uploadPictures");
 
-app.post("/sign_up_company", function(req, res) {
+app.post("/sign_up_company", uploadPictures, function(req, res) {
 	if (validator.isEmail(req.body.email) === false) {
 		return res.status(400).json({ message: "Invalid email" });
 	}
-
+	console.log(req.pictures);
 	const password = req.body.password;
 	const salt = uid2(16);
 	const hash = SHA256(password + salt).toString(encBase64);
@@ -24,7 +25,7 @@ app.post("/sign_up_company", function(req, res) {
 		hash: hash,
 		companyAccount: {
 			companyName: req.body.companyName,
-			companyLogo: req.body.companyLogo
+			companyLogo: req.pictures[0].secure_url
 		}
 	});
 

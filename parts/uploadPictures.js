@@ -2,9 +2,9 @@
 const cloudinary = require("cloudinary");
 // Configuration de Cloudinary
 cloudinary.config({
-	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET
+	cloud_name: "devtadpg5",
+	api_key: "926556466949595",
+	api_secret: "x0sz0n857RPoRurBP6UTFpS3ob8"
 });
 const uid2 = require("uid2");
 
@@ -25,10 +25,10 @@ const uploadPictures = (req, res, next) => {
 				file,
 				{
 					// J'assigne un dossier spécifique dans Cloudinary pour chaque utilisateur
-					public_id: `test-it/${req.user._id}/${name}`
+					public_id: `test-it/${req.body.companyName}/${name}`
 				},
 				(error, result) => {
-					console.log(error, result);
+					// console.log(error, result);
 					// Si j'ai une erreur avec l'upload, je sors de ma route
 					if (error) {
 						return res.status(500).json({ error });
@@ -37,7 +37,7 @@ const uploadPictures = (req, res, next) => {
 					pictures.push(result);
 					// Et j'incrémente le nombre d'upload
 					filesUploaded++;
-					console.log("-------\n", result);
+					// console.log("-------\n", result);
 					// Si le nombre d'uploads est égal au nombre de fichiers envoyés...
 					if (filesUploaded === files.length) {
 						/* res

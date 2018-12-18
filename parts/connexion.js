@@ -212,4 +212,22 @@ app.post("/freeemail", function(req, res) {
 	});
 });
 
+app.post("/newPassword", function(req, res) {
+	User.findById(req.body.id).exec((err, user) => {
+		if (user) {
+			if (
+				SHA256(req.body.oldPassword + user.salt).toString(encBase64) !==
+				user.hash
+			) {
+				return res.json({ message: "Ancien mdp invalide" });
+			} else {
+				user.hash = SHA256(req.body.newPassword + user.salt).toString(
+					encBase64
+				);
+				return res.json({ message: "nouveau password saved" });
+			}
+		}
+	});
+});
+
 module.exports = app;
