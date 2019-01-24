@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 const bodyParser = require("body-parser");
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
 
 // Connecter la base de données
 const mongoose = require("mongoose");

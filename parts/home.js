@@ -19,7 +19,13 @@ app.get("/home", function(req, res) {
 
 app.get("/home/with-count", function(req, res) {
 	let filter = {};
-	if (!req.query.title) {
+
+	//filter = { industry.name : { $in: req.query.selectedCategories.split(" ")}}
+	if (
+		(req.query.online == "false" && req.query.physical == "false") ||
+		(req.query.online == "true" && req.query.physical == "true")
+	) {
+		// console.log("ok");
 		filter = {
 			$or: [{ genderTarget: req.query.genderTarget }, { genderTarget: "" }],
 			ageMax: { $gte: req.query.age },
@@ -33,85 +39,62 @@ app.get("/home/with-count", function(req, res) {
 			if (req.query.priceMin) {
 				filter.price["$gte"] = req.query.priceMin;
 			}
-
 			if (req.query.priceMax) {
 				filter.price["$lte"] = req.query.priceMax;
 			}
 		}
 	} else {
-		filter = {
-			// $and: [
-			// 	{
-			$or: [{ genderTarget: req.query.genderTarget }, { genderTarget: "" }],
-			// },
-			// {
-			// $or: [
-			// 	{
-			// 		offerName: {
-			// 			$regex: req.query.title,
-			// 			$options: "i"
-			// 		}
-			// 	}
-			// {
-			// 	company: {
-			// 		companyAccount: {
-			// 			companyName: {
-			// 				$regex: req.query.title,
-			// 				$options: "i"
-			// 			}
-			// 		}
-			// 	}
-			// }
-			// ]
-			// 	}
-			// ],
-
-			ageMax: { $gte: req.query.age },
-			ageMin: { $lte: req.query.age }
-		};
-		if (
-			(req.query.priceMin !== undefined && req.query.priceMin !== "") ||
-			(req.query.priceMax !== undefined && req.query.priceMax !== "")
-		) {
-			filter.price = {};
-			if (req.query.priceMin) {
-				filter.price["$gte"] = req.query.priceMin;
+		if (req.query.online === "true") {
+			filter = {
+				$or: [{ genderTarget: req.query.genderTarget }, { genderTarget: "" }],
+				ageMax: { $gte: req.query.age },
+				ageMin: { $lte: req.query.age },
+				typeOffer: "Online"
+			};
+			if (
+				(req.query.priceMin !== undefined && req.query.priceMin !== "") ||
+				(req.query.priceMax !== undefined && req.query.priceMax !== "")
+			) {
+				filter.price = {};
+				if (req.query.priceMin) {
+					filter.price["$gte"] = req.query.priceMin;
+				}
+				if (req.query.priceMax) {
+					filter.price["$lte"] = req.query.priceMax;
+				}
 			}
-
-			if (req.query.priceMax) {
-				filter.price["$lte"] = req.query.priceMax;
+		} else {
+			filter = {
+				$or: [{ genderTarget: req.query.genderTarget }, { genderTarget: "" }],
+				ageMax: { $gte: req.query.age },
+				ageMin: { $lte: req.query.age },
+				typeOffer: "Physique"
+			};
+			if (
+				(req.query.priceMin !== undefined && req.query.priceMin !== "") ||
+				(req.query.priceMax !== undefined && req.query.priceMax !== "")
+			) {
+				filter.price = {};
+				if (req.query.priceMin) {
+					filter.price["$gte"] = req.query.priceMin;
+				}
+				if (req.query.priceMax) {
+					filter.price["$lte"] = req.query.priceMax;
+				}
 			}
 		}
 	}
-	// if (req.query.title) {
-	// 	// title = [];
-	// 	// title.offerName = {
-	// 	// 	$regex: req.query.title,
-	// 	// 	$options: "i"
-	// 	// };
-	// 	// title.companyName = {
-	// 	// 	$regex: req.query.title,
-	// 	// 	$options: "i"
-	// 	// };
-	// 	(filter["$and"] = {
-	// 		$or: [
-	// 			{
-	// 				offerName: {
-	// 					$regex: req.query.title,
-	// 					$options: "i"
-	// 				}
-	// 			},
-	// 			{
-	// 				companyName: {
-	// 					$regex: req.query.title,
-	// 					$options: "i"
-	// 				}
-	// 			}
-	// 		]
-	// 	}),
-	// 		{ $or: [{ genderTarget: req.query.genderTarget }, { genderTarget: "" }] };
-	// 	// console.log(filter.title);
+	// if (req.query.selectedCategoryJoin) {
+	// 	console.log(req.query.selectedCategoryJoin.split(" "));
+	// 	filter.industry = {
+	// 		$elemMatch: {
+	// 			name:
+	// 				"Cosmétique" /* { $in: req.query.selectedCategoryJoin.split(" ") } */
+	// 		}
+	// 	};
 	// }
+
+	// console.log(filter);
 
 	Offer.count(filter, (err, count) => {
 		// const query = Offer.find(filter).populate({
@@ -119,8 +102,38 @@ app.get("/home/with-count", function(req, res) {
 		// 	select: "account"
 		// });
 		// console.log(filter);
-		const query = Offer.find(filter).populate("company");
-
+		let query;
+		if (req.query.selectedCategoryJoin) {
+			query = Offer.find(filter)
+				.populate("company")
+				.populate({
+					path: "industry",
+					match: { name: { $in: req.query.selectedCategoryJoin.split(" ") } }
+				});
+		} else {
+			query = Offer.find(filter)
+				.populate("company")
+				.populate("industry");
+		}
+		// .populate("industry", { match: { name: { $in: ["Food", "politics"] } } });
+		// Offer.find(filter)
+		// 	.populate("company")
+		// 	// .populate("industry");
+		// 	.populate({
+		// 		path: "industry",
+		// 		match: { name: { $in: ["Food"] } }
+		// 	})
+		// 	.exec(function(err, users) {
+		// 		users.forEach(element => {
+		// 			if (element.industry.length !== 0) {
+		// 				console.log(element);
+		// 			}
+		// 		});
+		// 		// users = users.filter(function(user) {
+		// 		// 	console.log(user); // return only users with email matching 'type: "Gmail"' query
+		// 		// });
+		// 	});
+		// console.log(query);
 		// if (req.query.skip !== undefined) {
 		// 	query.skip(parseInt(req.query.skip));
 		// }
@@ -130,6 +143,10 @@ app.get("/home/with-count", function(req, res) {
 		// 	// valeur par défaut de la limite
 		// 	query.limit(100);
 		// }
+		// let query = await results.lookup({
+		// 	path: "industry",
+		// 	query: { name: { $in: ["Food", "Music"] } }
+		// });
 
 		switch (req.query.sort) {
 			case "Prix décroissants":
@@ -155,7 +172,21 @@ app.get("/home/with-count", function(req, res) {
 				break;
 		}
 
-		query.exec((err, offers) => {
+		query.exec((err, result) => {
+			let offers;
+			// console.log(req.query.selectedCategoryJoin);
+			if (req.query.selectedCategoryJoin) {
+				// console.log("yes");
+				offers = [];
+				result.forEach(element => {
+					if (element.industry.length !== 0) {
+						offers.push(element);
+					}
+				});
+			} else {
+				// console.log("no");
+				offers = result;
+			}
 			if (!req.query.title) {
 				res.json({ count, offers });
 			} else {

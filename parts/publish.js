@@ -26,10 +26,13 @@ const expo = new Expo();
 app.post("/publish", uploadPictures, function(req, res) {
 	// NOTIFICATION LISTE D'ENVOIE
 	const notificationTokens = [];
+	// console.log(req.body.genderTarget);
 	if (req.body.genderTarget) {
+		// console.log("yes");
 		User.find({
-			$or: [{ "account.sex": req.body.genderTarget }, { "account.sex": "" }]
+			"account.sex": req.body.genderTarget
 		}).exec(function(err, result) {
+			// console.log("yes", result);
 			const today = new Date();
 			for (i = 0; i < result.length; i++) {
 				const birthDate = new Date(result[i].account.birthDate);
@@ -37,9 +40,28 @@ app.post("/publish", uploadPictures, function(req, res) {
 				// console.log(age);
 				// console.log("agemin", req.body.ageMin);
 				// console.log("agemax", req.body.ageMax);
-				if (age >= req.body.ageMin || age <= req.body.ageMax) {
+				if (age >= req.body.age[0] || age <= req.body.age[1]) {
 					notificationTokens.push(result[i].tokenNotifications);
-					// console.log(result.tokenNotifications);
+					// console.log(result[i].tokenNotifications);
+				}
+			}
+			// console.log("notiftokens", notificationTokens);
+		});
+	} else {
+		User.find({
+			$or: [{ "account.sex": "homme" }, { "account.sex": "femme" }]
+		}).exec(function(err, result) {
+			// console.log("yes", result);
+			const today = new Date();
+			for (i = 0; i < result.length; i++) {
+				const birthDate = new Date(result[i].account.birthDate);
+				const age = today.getFullYear() - birthDate.getFullYear();
+				// console.log(age);
+				// console.log("agemin", req.body.ageMin);
+				// console.log("agemax", req.body.ageMax);
+				if (age >= req.body.age[0] || age <= req.body.age[1]) {
+					notificationTokens.push(result[i].tokenNotifications);
+					// console.log(result[i].tokenNotifications);
 				}
 			}
 			// console.log("notiftokens", notificationTokens);
@@ -131,9 +153,8 @@ app.post("/publish", uploadPictures, function(req, res) {
 				messages.push({
 					to: pushToken,
 					sound: "default",
-					title: "Nouveau test",
-					body:
-						"Une nouvelle offre de test vous correspond, cliquez ici pour la voir !"
+					title: req.body.companyName,
+					body: req.body.offerName + ": nouvelle offre !"
 					// data: { withSome: "data" }
 				});
 			}

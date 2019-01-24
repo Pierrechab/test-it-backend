@@ -129,7 +129,15 @@ app.post("/participation", function(req, res) {
 			}
 		}
 	});
+	// Diminuer d’une place
+	Offer.findOne({ _id: Offer_id }).exec(function(err, OfferFound) {
+		if (err) {
+			res.json(err);
+		} else {
+			OfferFound.availabilities--;
+			OfferFound.save(function(err, OfferSaved) {});
+		}
+	});
 });
-
 // Exporter le module
 module.exports = app;
