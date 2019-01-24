@@ -25,7 +25,7 @@ app.post("/sign_up_company", uploadPictures, function(req, res) {
 		hash: hash,
 		companyAccount: {
 			companyName: req.body.companyName,
-			companyLogo: req.pictures[0].secure_url
+			companyLogo: req.pictures[0]
 		}
 	});
 

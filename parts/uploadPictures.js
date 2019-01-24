@@ -9,7 +9,6 @@ cloudinary.config({
 const uid2 = require("uid2");
 
 const uploadPictures = (req, res, next) => {
-	console.log("upload pictures");
 	// J'initialise un tableau vide pour y stocker mes images uploadées
 	const pictures = [];
 	// Je récupères le tabelau de fichiers
@@ -33,8 +32,14 @@ const uploadPictures = (req, res, next) => {
 					if (error) {
 						return res.status(500).json({ error });
 					}
+					console.log("upload pictures", result);
 					// Sinon, je push mon image dans le tableau
-					pictures.push(result);
+					let urlWithSizing =
+						"https://res.cloudinary.com/devtadpg5/image/upload/w_600,h_400/" +
+						result.public_id +
+						"." +
+						result.format;
+					pictures.push(urlWithSizing);
 					// Et j'incrémente le nombre d'upload
 					filesUploaded++;
 					// console.log("-------\n", result);
