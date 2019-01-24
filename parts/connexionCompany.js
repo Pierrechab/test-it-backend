@@ -13,7 +13,7 @@ app.post("/sign_up_company", uploadPictures, function(req, res) {
 	if (validator.isEmail(req.body.email) === false) {
 		return res.status(400).json({ message: "Invalid email" });
 	}
-	console.log(req.pictures);
+	// console.log(req.pictures);
 	const password = req.body.password;
 	const salt = uid2(16);
 	const hash = SHA256(password + salt).toString(encBase64);
