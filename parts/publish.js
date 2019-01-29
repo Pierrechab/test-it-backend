@@ -45,7 +45,7 @@ app.post("/publish", uploadPictures, function(req, res) {
 					// console.log(result[i].tokenNotifications);
 				}
 			}
-			// console.log("notiftokens", notificationTokens);
+			console.log("notiftokens", notificationTokens);
 		});
 	} else {
 		User.find({
@@ -116,8 +116,8 @@ app.post("/publish", uploadPictures, function(req, res) {
 				availabilities: req.body.availabilities,
 				price: req.body.price,
 				typeOffer: req.body.typeOffer,
-				ageMin: req.body.ageMin,
-				ageMax: req.body.ageMax,
+				ageMin: req.body.age[0],
+				ageMax: req.body.age[1],
 				company: req.body.company,
 				genderTarget: req.body.genderTarget,
 				industry: req.body.industry

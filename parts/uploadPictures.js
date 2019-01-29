@@ -32,7 +32,7 @@ const uploadPictures = (req, res, next) => {
 					if (error) {
 						return res.status(500).json({ error });
 					}
-					console.log("upload pictures", result);
+					// console.log("upload pictures", result);
 					// Sinon, je push mon image dans le tableau
 					let urlWithSizing =
 						"https://res.cloudinary.com/devtadpg5/image/upload/w_600,h_400/" +
